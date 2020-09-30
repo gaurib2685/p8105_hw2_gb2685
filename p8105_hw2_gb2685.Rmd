@@ -169,3 +169,14 @@ stations_serve_A =
 
 *17 stations that serve the A train are ADA compliant.* 
 
+
+## Problem 3
+
+**Read data in csv, clean and separate variable mon into integer variables**
+
+```{r}
+pols_df =
+  read_csv(file = "./data/fivethirtyeight_datasets/pols-month.csv") %>%
+  janitor::clean_names() %>%
+separate(mon, into = c("year", "month", "day"), sep = "-")
+```
