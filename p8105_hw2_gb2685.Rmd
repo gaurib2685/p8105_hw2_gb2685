@@ -88,7 +88,7 @@ nyc_transit_df$entry =
 
 ### Short note on the dataset
 
-The given dataset contains the variables: `r variable.names(nyc_transit_df)`. So far, I imported the data and read the data from the csv file usinf read_csv function. After that, using the pipe operator I went on to clean the dataset which converted the variable names to lower snake case. For this purpose, I used a function (clean_names) without loading the entire package (janitor). After this, I selected the required column names specified in the homework question using the select function and then selecting the variables in the specified order. In the next step, I converted the entry variable from character to logical  (TRUE, FALSE) using the ifelse function wherein I change the entry variable from nyc_transit_df dataset and assign TRUE for the values that earlier said "yes" and else - FALSE 
+The given dataset contains the variables: *`r variable.names(nyc_transit_df)`*. So far, I imported the data and read the data from the csv file usinf read_csv function. After that, using the pipe operator I went on to clean the dataset which converted the variable names to lower snake case. For this purpose, I used a function (clean_names) without loading the entire package (janitor). After this, I selected the required column names specified in the homework question using the select function and then selecting the variables in the specified order. In the next step, I converted the entry variable from character to logical  (TRUE, FALSE) using the ifelse function wherein I change the entry variable from nyc_transit_df dataset and assign TRUE for the values that earlier said "yes" and else FALSE. 
 
 The dataset now has `r nrow(nyc_transit_df)` rows and `r ncol(nyc_transit_df)` columns. 
 
@@ -97,7 +97,7 @@ The dataset now has `r nrow(nyc_transit_df)` rows and `r ncol(nyc_transit_df)` c
 ```{r}
 count(distinct(nyc_transit_df, paste(nyc_transit_df$line, nyc_transit_df$station_name)))
 ```
-The number of distinct stations are 465 
+*The number of distinct stations are 465.*
 
 **Finding how many stations are ADA compliant**
 
@@ -109,9 +109,10 @@ ada_compliant_station =
    count()
 
 ```
-84 stations are ADA compliant. 
+*84 stations are ADA compliant.*
 
 **Finding proportion of station entrances / exits without vending allow entrance**
+
 ```{r}
 total_entry =
   filter(nyc_transit_df, vending=='NO') %>%
@@ -127,5 +128,44 @@ proportion = tot_entry_allowed/total_entry
 
 proportion
 ```
-The proportion of station entrances / exits without vending that allow entrance is 0.37705 or 37.705%
+*The proportion of station entrances / exits without vending that allow entrance is 0.37705 or 37.705%*
+
+**Reformat data so that route number and route name are distinct variables** 
+
+```{r}
+nyc_transit_df = mutate(nyc_transit_df,
+       route8 = as.character(route8)) %>%
+mutate(route9 = as.character(route9)) %>%
+mutate(route10 = as.character(route10)) %>%
+mutate(route11 = as.character(route11))
+
+nyc_transit_df =
+ pivot_longer(
+    nyc_transit_df, 
+    route1:route11,
+    names_to = "route_number", 
+    values_to = "route_names")
+```
+
+**Finding many distinct stations serve the A train**
+
+```{r}
+stations_serve_A = 
+  filter(nyc_transit_df, route_names=="A") %>%
+  distinct(paste(line, station_name)) %>%
+   count()
+```
+*60 distinct stations serve the A train.*
+
+**Finding how many of the stations that serve the A train are ADA compliant?**
+
+```{r}
+stations_serve_A = 
+  filter(nyc_transit_df, route_names=="A") %>%
+  filter(ada == "TRUE") %>%
+  distinct(paste(line, station_name)) %>%
+   count()
+```
+
+*17 stations that serve the A train are ADA compliant.* 
 
