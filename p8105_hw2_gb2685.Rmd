@@ -185,6 +185,7 @@ pols_df =
   mutate(day = as.numeric(day))
   
 ```
+
 I converted the year and month and day to numeric type so as to facilitate the left join in the following chunk: 
 **Replacing month number with month names, creating a president variable taking values gop and dem, and removed prez_dem and prez_gop and the day variable**
 month_df had already been created for the Problem 1. I used the same dataframe for the purpose of the following left join; 
@@ -197,3 +198,30 @@ pols_df=left_join(pols_df,month_df,by="month")%>%
 
 pols_df
 ```
+
+**Reading and cleaning the snp data and arranging the year and month in ascending order**
+
+```{r}
+snp_df =
+  read_csv(file = "./data/fivethirtyeight_datasets/snp.csv") %>%
+  janitor::clean_names() %>%
+  separate(date, into = c("month", "day", "year"), sep = "/")%>%
+  mutate(year = as.numeric(year))%>%
+  mutate(month = as.numeric(month))%>%
+  mutate(day = as.numeric(day))%>%
+  arrange(year, month)
+  
+```
+
+**Replacing month number with month names, and organising using relocate function to have year and month as the leading variables.** 
+
+```{r}
+snp_df=
+  left_join(snp_df,month_df,by="month")%>%
+  mutate(month = month_name)%>%
+  within(rm(day,month_name))%>%
+  relocate(year, month)
+
+snp_df
+```
+
