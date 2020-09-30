@@ -77,7 +77,16 @@ Reading the NYC Transit data from the csv and cleaning it :
 ```{r}
 nyc_transit_df =
   read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
-  janitor::clean_names() 
+  janitor::clean_names() %>%
+  select(division:route11, entry, vending, entrance_type, ada)
+
+# Converting the entry variable from character to logical  (TRUE, FALSE)
+nyc_transit_df$entry =
+  ifelse(nyc_transit_df$entry=="YES",TRUE,FALSE )
 ```
+
+
+
+
 
 
