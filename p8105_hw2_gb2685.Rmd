@@ -103,11 +103,12 @@ count(distinct(nyc_transit_df, paste(nyc_transit_df$line, nyc_transit_df$station
 
 ```{r}
 
-ada_compliant_station = 
+ada_compliant_stations = 
   filter(nyc_transit_df, ada==TRUE) %>%
   distinct(paste(line, station_name)) %>%
    count()
 
+ada_compliant_stations
 ```
 *84 stations are ADA compliant.*
 
@@ -127,6 +128,7 @@ tot_entry_allowed =
 proportion = tot_entry_allowed/total_entry
 
 proportion
+
 ```
 *The proportion of station entrances / exits without vending that allow entrance is 0.37705 or 37.705%*
 
@@ -213,7 +215,7 @@ snp_df =
   
 ```
 
-**Replacing month number with month names, and organising using relocate function to have year and month as the leading variables.** 
+**Replacing month number with month names, and organising using relocate function to have year and month as the leading variables** 
 
 ```{r}
 snp_df=
@@ -224,4 +226,41 @@ snp_df=
 
 snp_df
 ```
+
+**Tidying the unemployment data**
+
+```{r}
+unem_df = 
+  read_csv(file = "./data/fivethirtyeight_datasets/unemployment.csv") %>%
+  janitor::clean_names() %>%
+  pivot_longer(jan:dec,names_to ="month",values_to="values")
+```
+
+**Changing the month names so as to match them with the format in snp and pols data**
+
+```{r}
+
+month_short_df =
+  tibble(
+    month = c("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"),
+    month_name = month.name
+  )
+
+unem_df = left_join(unem_df,month_short_df,by = "month") %>%
+  mutate(month = month_name)%>%
+  within(rm(month_name))
+  
+unem_df
+```
+
+**Merging the datasets using left join**
+
+```{r}
+pols_df = left_join(pols_df, snp_df,by=c("year","month"))
+pols_df = left_join(pols_df, unem_df,by=c("year","month"))
+    
+pols_df
+```
+
+## Description of the dataset
 
