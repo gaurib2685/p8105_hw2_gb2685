@@ -71,6 +71,13 @@ left_join(precip_df, month_df, by = "month")
 
 This dataset contains information from the Mr. Trashwheel trash collector in Balitimore, Maryland. The dataset contains information on year, month, trash collected, specific kinds of trash. There are total `r nrow(trashwheel_df)` rows. Additional data sheets include month precipitation data. 
 
+## Problem 2 
 
+Reading the NYC Transit data from the csv and cleaning it : 
+```{r}
+nyc_transit_df =
+  read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
+  janitor::clean_names() 
+```
 
 
