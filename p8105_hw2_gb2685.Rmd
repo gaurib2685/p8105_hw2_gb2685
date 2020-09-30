@@ -174,9 +174,26 @@ stations_serve_A =
 
 **Read data in csv, clean and separate variable mon into integer variables**
 
+
 ```{r}
 pols_df =
   read_csv(file = "./data/fivethirtyeight_datasets/pols-month.csv") %>%
   janitor::clean_names() %>%
-separate(mon, into = c("year", "month", "day"), sep = "-")
+  separate(mon, into = c("year", "month", "day"), sep = "-")%>%
+  mutate(year = as.numeric(year))%>%
+  mutate(month = as.numeric(month))%>%
+  mutate(day = as.numeric(day))
+  
+```
+I converted the year and month and day to numeric type so as to facilitate the left join in the following chunk: 
+**Replacing month number with month names, creating a president variable taking values gop and dem, and removed prez_dem and prez_gop and the day variable**
+month_df had already been created for the Problem 1. I used the same dataframe for the purpose of the following left join; 
+
+```{r}
+pols_df=left_join(pols_df,month_df,by="month")%>%
+  mutate(month = month_name)%>%
+  mutate(president = ifelse(prez_gop==1,"gop","dem"))%>%
+  within(rm(prez_gop,prez_dem,day,month_name))
+
+pols_df
 ```
