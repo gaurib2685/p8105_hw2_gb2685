@@ -2,15 +2,16 @@
 title: "Homework 2"
 author: Gauri Bhatkhande 
 output: github_document
-editor_options: 
-  chunk_output_type: console
+chunk_output_type: console
 ---
 
 
 ```{r setup}
+
 library(tidyverse)
 library(readxl)
 library(dplyr)
+
 ```
 
 ## Problem 1 
@@ -79,7 +80,7 @@ Reading the NYC Transit data from the csv and cleaning it :
 nyc_transit_df =
   read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
   janitor::clean_names() %>%
-  select(division:route11, entry, vending, entrance_type, ada)
+  select(line:route11, entry, vending, entrance_type, ada)
 
 # Converting the entry variable from character to logical  (TRUE, FALSE)
 nyc_transit_df$entry =
@@ -88,7 +89,7 @@ nyc_transit_df$entry =
 
 ### Short note on the dataset
 
-The given dataset contains the variables: *`r variable.names(nyc_transit_df)`*. So far, I imported the data and read the data from the csv file usinf read_csv function. After that, using the pipe operator I went on to clean the dataset which converted the variable names to lower snake case. For this purpose, I used a function (clean_names) without loading the entire package (janitor). After this, I selected the required column names specified in the homework question using the select function and then selecting the variables in the specified order. In the next step, I converted the entry variable from character to logical  (TRUE, FALSE) using the ifelse function wherein I change the entry variable from nyc_transit_df dataset and assign TRUE for the values that earlier said "yes" and else FALSE. 
+The given dataset contains the variables: `r variable.names(nyc_transit_df)`. So far, I imported the data and read the data from the csv file usinf read_csv function. After that, using the pipe operator I went on to clean the dataset which converted the variable names to lower snake case. For this purpose, I used a function (clean_names) without loading the entire package (janitor). After this, I selected the required column names specified in the homework question using the select function and then selecting the variables in the specified order. In the next step, I converted the entry variable from character to logical  (TRUE, FALSE) using the ifelse function wherein I change the entry variable from nyc_transit_df dataset and assign TRUE for the values that earlier said "yes" and else FALSE. 
 
 The dataset now has `r nrow(nyc_transit_df)` rows and `r ncol(nyc_transit_df)` columns. 
 
@@ -109,7 +110,7 @@ ada_compliant_stations =
 
 ada_compliant_stations
 ```
-* `r filter(nyc_transit_df, ada==TRUE) %>% distinct(paste(line, station_name)) %>% count()` stations are ADA compliant.*
+`r filter(nyc_transit_df, ada==TRUE) %>% distinct(paste(line, station_name)) %>% count()` stations are ADA compliant.
 
 **Finding proportion of station entrances / exits without vending allow entrance**
 
@@ -145,28 +146,35 @@ nyc_transit_df =
     nyc_transit_df, 
     route1:route11,
     names_to = "route_number", 
-    values_to = "route_names")
+    values_to = "route_names") %>%
+  drop_na(route_names)
+  
 ```
+In the above chunk I dropped rows with NA in the route names as it becomes more tidy. 
 
 
-**Finding many distinct stations serve the A train**
+**Finding how many distinct stations serve the A train**
 
 ```{r}
 stations_serve_A = 
   filter(nyc_transit_df, route_names=="A") %>%
   distinct(paste(line, station_name)) %>%
    count()
+
+stations_serve_A
 ```
 *60 distinct stations serve the A train.*
 
 **Finding how many of the stations that serve the A train are ADA compliant?**
 
 ```{r}
-stations_serve_A = 
+stations_serve_A_ADA = 
   filter(nyc_transit_df, route_names=="A") %>%
   filter(ada == "TRUE") %>%
   distinct(paste(line, station_name)) %>%
    count()
+
+stations_serve_A_ADA
 ```
 
 *17 stations that serve the A train are ADA compliant.* 
@@ -269,5 +277,5 @@ The dataset snp_df contains the variables `r variable.names(snp_df)`. The datase
 
 THe dataset unem_df contains unemployment information for the unemployment percentage for the years and months. It contains the variables `r variable.names(unem_df)`. 
 
-The resulting dataset formed after inner join of pols_df, snp_df and unem_df contains `r variable.names(pols_df)`. The dimensions of the dataset are: 822 x 11. The range of years covered is `r min(pols_df$year)` to `r max(pols_df$year)`. The key variables are year, president (which tells us whether it was a democrat or gop), close, value
+The resulting dataset formed after inner join of pols_df, snp_df and unem_df contains `r variable.names(pols_df)`. The dimensions of the dataset are: *822 x 11*. The range of years covered is `r min(pols_df$year)` to `r max(pols_df$year)`. The key variables are year, president (which tells us whether it was a democrat or gop), close, value
 
