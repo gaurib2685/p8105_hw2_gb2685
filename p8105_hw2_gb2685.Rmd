@@ -92,12 +92,11 @@ The given dataset contains the variables: *`r variable.names(nyc_transit_df)`*. 
 
 The dataset now has `r nrow(nyc_transit_df)` rows and `r ncol(nyc_transit_df)` columns. 
 
+These data are not tidy as the routes are all written as separate variables when they should have been a part of the same varaible or column. 
+
 **Finding number of distinct stations**
 
-```{r}
-count(distinct(nyc_transit_df, paste(nyc_transit_df$line, nyc_transit_df$station_name)))
-```
-*The number of distinct stations are 465.*
+*The number of distinct stations are `r count(distinct(nyc_transit_df,paste(nyc_transit_df$line, nyc_transit_df$station_name)))`.*
 
 **Finding how many stations are ADA compliant**
 
@@ -110,7 +109,7 @@ ada_compliant_stations =
 
 ada_compliant_stations
 ```
-*84 stations are ADA compliant.*
+* `r filter(nyc_transit_df, ada==TRUE) %>% distinct(paste(line, station_name)) %>% count()` stations are ADA compliant.*
 
 **Finding proportion of station entrances / exits without vending allow entrance**
 
@@ -148,6 +147,7 @@ nyc_transit_df =
     names_to = "route_number", 
     values_to = "route_names")
 ```
+
 
 **Finding many distinct stations serve the A train**
 
@@ -263,4 +263,11 @@ pols_df
 ```
 
 ## Description of the dataset
+The dataset pols_df contained information about the year and the party of the president pertaining to that year i.e. democratic or gop. The dataset also contains information about the number of senators, governors and representatives that belonged to one of the two parties pertaining to a certain year since 1947. 
+
+The dataset snp_df contains the variables `r variable.names(snp_df)`. The dataset has the closing values pertaining to every year and every month. 
+
+THe dataset unem_df contains unemployment information for the unemployment percentage for the years and months. It contains the variables `r variable.names(unem_df)`. 
+
+The resulting dataset formed after inner join of pols_df, snp_df and unem_df contains `r variable.names(pols_df)`. The dimensions of the dataset are: 822 x 11. The range of years covered is `r min(pols_df$year)` to `r max(pols_df$year)`. The key variables are year, president (which tells us whether it was a democrat or gop), close, value
 
